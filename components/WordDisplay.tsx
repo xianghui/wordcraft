@@ -20,7 +20,7 @@ export const WordDisplay: React.FC<WordDisplayProps> = ({
     <div className="w-full max-w-3xl flex flex-col items-center">
       <div className="w-full h-40 sm:h-48 bg-stone-800/80 rounded-lg flex items-center justify-center mb-4 block-inset border-stone-900 overflow-hidden">
         {isImageLoading && <div className="text-4xl animate-spin">🖼️</div>}
-        {!isImageLoading && imageUrl && <img src={imageUrl} alt={`Illustration of ${targetWord}`} className="max-w-full max-h-full object-contain p-2" />}
+        {!isImageLoading && imageUrl && <img src={imageUrl} alt={`Illustration of ${targetWord}`} className="max-w-full max-h-full object-contain p-2 bg-white" />}
         {!isImageLoading && !imageUrl && <div className="text-stone-500 text-center px-4">Could not load image.</div>}
       </div>
 

@@ -29,8 +29,8 @@ export const GameScreen: React.FC<GameScreenProps> = ({
   const [isLevelComplete, setIsLevelComplete] = useState(false);
   const [incorrectClicks, setIncorrectClicks] = useState<string[]>([]);
   const [letterUsage, setLetterUsage] = useState<Record<string, { required: number, spelled: number }>>({});
-  const [isHintUsed, setIsHintUsed] = useState(false);
   const [hintedBlockId, setHintedBlockId] = useState<string | null>(null);
+  const [hintRequestCount, setHintRequestCount] = useState(0);
   const [wrongTries, setWrongTries] = useState(0);
   
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -143,9 +143,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     // Reset state for the new word
     setSpelledWord('');
     setIsLevelComplete(false);
-    setIsHintUsed(false);
     setHintedBlockId(null);
     setWrongTries(0);
+    setHintRequestCount(0);
   }, [targetWord, generateGrid]);
 
   useEffect(() => {
@@ -163,6 +163,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
   const handleBlockClick = useCallback((block: BlockData) => {
     if (isLevelComplete || block.isMined) return;
 
+    setHintRequestCount(0);
     const nextLetterIndex = spelledWord.length;
     if (nextLetterIndex >= targetWord.length) return;
     
@@ -170,6 +171,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
 
     if (block.letter === nextLetterNeeded) {
       // Correct letter clicked
+      setHintedBlockId(null);
       setSpelledWord(prev => prev + block.letter);
       
       const updatedUsage = {
@@ -213,19 +215,14 @@ export const GameScreen: React.FC<GameScreenProps> = ({
   }, [targetWord]);
 
   const handleHintRequest = useCallback(() => {
-    if (isHintUsed || isLevelComplete) return;
-
+    if (isLevelComplete) return;
+  
     const nextLetterNeeded = targetWord[spelledWord.length];
-    if (nextLetterNeeded) {
-        setIsHintUsed(true);
-        setHintedBlockId(nextLetterNeeded);
-        const timerId = window.setTimeout(() => {
-            setHintedBlockId(null);
-            timeoutIdsRef.current.delete(timerId);
-        }, 2000);
-        timeoutIdsRef.current.add(timerId);
-    }
-  }, [isHintUsed, isLevelComplete, targetWord, spelledWord.length]);
+    if (!nextLetterNeeded) return;
+
+    setHintedBlockId(nextLetterNeeded);
+    setHintRequestCount(prev => prev + 1);
+  }, [isLevelComplete, targetWord, spelledWord]);
   
   const handleShowAnswer = useCallback(() => {
     if (isLevelComplete) return;
@@ -245,7 +242,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
             onPreviousWord={onPreviousWord}
             isFirstWord={isFirstWord}
             onHintRequest={handleHintRequest}
-            isHintUsed={isHintUsed}
+            isHintUsed={hintRequestCount > 0}
             onShowAnswer={handleShowAnswer}
             showHintButton={shouldShowHint}
         />
