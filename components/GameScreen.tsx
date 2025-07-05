@@ -27,6 +27,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
   const [grid, setGrid] = useState<BlockData[]>([]);
   const [spelledWord, setSpelledWord] = useState('');
   const [isLevelComplete, setIsLevelComplete] = useState(false);
+  const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
   const [incorrectClicks, setIncorrectClicks] = useState<string[]>([]);
   const [letterUsage, setLetterUsage] = useState<Record<string, { required: number, spelled: number }>>({});
   const [hintedBlockId, setHintedBlockId] = useState<string | null>(null);
@@ -163,6 +164,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     // Reset state for the new word
     setSpelledWord('');
     setIsLevelComplete(false);
+    setIsAnswerRevealed(false);
     setHintedBlockId(null);
     setWrongTries(0);
     setHintRequestCount(0);
@@ -170,7 +172,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({
 
   useEffect(() => {
     if (targetWord.length > 0 && spelledWord.length === targetWord.length && !isLevelComplete) {
-      playClappingSound();
+      if (!isAnswerRevealed) {
+        playClappingSound();
+      }
       // Delay setting level complete to allow sound to play
       const timer = setTimeout(() => {
           setIsLevelComplete(true);
@@ -178,7 +182,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
       
       return () => clearTimeout(timer);
     }
-  }, [spelledWord, targetWord, isLevelComplete, playClappingSound]);
+  }, [spelledWord, targetWord, isLevelComplete, playClappingSound, isAnswerRevealed]);
 
   const handleBlockClick = useCallback((block: BlockData) => {
     if (isLevelComplete || block.isMined) return;
@@ -263,6 +267,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
   
   const handleShowAnswer = useCallback(() => {
     if (isLevelComplete) return;
+    setIsAnswerRevealed(true);
     setSpelledWord(targetWord);
     // The useEffect watching spelledWord will handle the rest (sound, isLevelComplete flag)
   }, [isLevelComplete, targetWord]);
