@@ -204,6 +204,23 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     }
   }, [isLevelComplete, spelledWord, targetWord, playIncorrectSound, letterUsage]);
   
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      const letter = event.key.toUpperCase();
+      if (ALPHABET.includes(letter)) {
+        const block = grid.find(b => b.letter === letter);
+        if (block) {
+          handleBlockClick(block);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [grid, handleBlockClick]);
+
   const handleSpeakWord = useCallback(() => {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(targetWord.toLowerCase());
