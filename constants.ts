@@ -1,6 +1,6 @@
 import { Difficulty, WordData } from "./types";
 
-export const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+export const ALPHABET = "QWERTYUIOPASDFGHJKLZXCVBNM";
 
 export const WORD_LISTS: Record<Difficulty, WordData[]> = {
   easy: [
