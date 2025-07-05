@@ -56,7 +56,7 @@ export const WORD_LISTS: Record<Difficulty, WordData[]> = {
     { word: "RAT", imageUrl: "https://img.icons8.com/emoji/48/rat-emoji.png" },
     { word: "SIT", imageUrl: "https://img.icons8.com/ios/50/counselor.png" },
     { word: "TEN", imageUrl: "https://img.icons8.com/officel/80/10.png" },
-    { word: "BOX", imageUrl: "https://img.icons8.com/plasticine/100/box.png" },
+    { word: "BOX", imageUrl: "https://img.icons8.com/pastel-glyph/128/box--v2.png" },
     { word: "FOX", imageUrl: "https://img.icons8.com/plasticine/100/fox.png" },
     { word: "CAR", imageUrl: "https://img.icons8.com/plasticine/100/car.png" },
     { word: "BUS", imageUrl: "https://img.icons8.com/plasticine/100/bus.png" },
