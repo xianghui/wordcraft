@@ -14,7 +14,7 @@ export const WORD_LISTS: Record<Difficulty, WordData[]> = {
     },
     {
       word: "RED",
-      imageUrl: "https://img.icons8.com/plasticine/100/apple.png",
+      imageUrl: "https://img.icons8.com/emoji/48/red-circle-emoji.png",
     },
     { word: "PIG", imageUrl: "https://img.icons8.com/ios/100/pig.png" },
     {
