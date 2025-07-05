@@ -114,6 +114,26 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     oscillator.stop(context.currentTime + 0.3);
   }, [getAudioContext]);
 
+  const playClappingSound = useCallback(() => {
+    const context = getAudioContext();
+    if (!context) return;
+
+    fetch('./sounds/correct.mp3')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.arrayBuffer();
+      })
+      .then(arrayBuffer => context.decodeAudioData(arrayBuffer))
+      .then(audioBuffer => {
+        const source = context.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(context.destination);
+        source.start();
+      })
+      .catch(e => console.error("Error with decoding audio data", e));
+  }, [getAudioContext]);
 
   const generateGrid = useCallback(() => {
     const alphabetBlocks = ALPHABET.split('').map(letter => ({
@@ -150,7 +170,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
 
   useEffect(() => {
     if (targetWord.length > 0 && spelledWord.length === targetWord.length && !isLevelComplete) {
-      playCorrectSound();
+      playClappingSound();
       // Delay setting level complete to allow sound to play
       const timer = setTimeout(() => {
           setIsLevelComplete(true);
@@ -158,7 +178,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
       
       return () => clearTimeout(timer);
     }
-  }, [spelledWord, targetWord, isLevelComplete, playCorrectSound]);
+  }, [spelledWord, targetWord, isLevelComplete, playClappingSound]);
 
   const handleBlockClick = useCallback((block: BlockData) => {
     if (isLevelComplete || block.isMined) return;
