@@ -1,7 +1,6 @@
-
-import React from 'react';
-import { LetterBlock } from './LetterBlock';
-import { BlockData } from '../types';
+import React from "react";
+import { LetterBlock } from "./LetterBlock";
+import { BlockData } from "../types";
 
 interface GameBoardProps {
   grid: BlockData[];
@@ -10,7 +9,34 @@ interface GameBoardProps {
   hintedBlockId: string | null;
 }
 
-export const GameBoard: React.FC<GameBoardProps> = ({ grid, onBlockClick, incorrectClicks, hintedBlockId }) => {
+export const GameBoard: React.FC<GameBoardProps> = ({
+  grid,
+  onBlockClick,
+  incorrectClicks,
+  hintedBlockId,
+}) => {
+  const qwertyRow1 = "QWERTYUIOP".split("");
+  const qwertyRow2 = "ASDFGHJKL".split("");
+  const qwertyRow3 = "ZXCVBNM".split("");
+
+  const renderRow = (rowLetters: string[], isCentered: boolean = false) => (
+    <div className={`flex justify-center ${isCentered ? "mx-auto" : ""}`}>
+      {rowLetters.map((letter) => {
+        const block = grid.find((b) => b.letter === letter);
+        if (!block) return null; // Should not happen if grid contains all alphabet letters
+        return (
+          <LetterBlock
+            key={block.id}
+            block={block}
+            onClick={() => onBlockClick(block)}
+            isShaking={incorrectClicks.includes(block.id)}
+            isHinted={block.id === hintedBlockId}
+          />
+        );
+      })}
+    </div>
+  );
+
   return (
     <>
       <style>{`
@@ -35,18 +61,10 @@ export const GameBoard: React.FC<GameBoardProps> = ({ grid, onBlockClick, incorr
             border-color: #c084fc; /* A brighter purple */
         }
       `}</style>
-      <div 
-          className="flex flex-wrap justify-center gap-2 p-4 bg-stone-700/50 rounded-lg block-inset border-stone-900 max-w-3xl"
-      >
-        {grid.map((block) => (
-          <LetterBlock
-            key={block.id}
-            block={block}
-            onClick={() => onBlockClick(block)}
-            isShaking={incorrectClicks.includes(block.id)}
-            isHinted={block.id === hintedBlockId}
-          />
-        ))}
+      <div className="w-full flex flex-col items-center p-0 sm:p-2 md:p-4 bg-stone-700/50 rounded-lg block-inset border-stone-900">
+        {renderRow(qwertyRow1)}
+        {renderRow(qwertyRow2, true)}
+        {renderRow(qwertyRow3, true)}
       </div>
     </>
   );
